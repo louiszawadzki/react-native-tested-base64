@@ -1,8 +1,8 @@
 package com.testedbase64
 
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.Promise
 
 class TestedBase64Module internal constructor(context: ReactApplicationContext) :
   TestedBase64Spec(context) {

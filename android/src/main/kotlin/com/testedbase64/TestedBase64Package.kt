@@ -1,10 +1,10 @@
 package com.testedbase64
 
 import com.facebook.react.TurboReactPackage
-import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.NativeModule
-import com.facebook.react.module.model.ReactModuleInfoProvider
+import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
+import com.facebook.react.module.model.ReactModuleInfoProvider
 import java.util.HashMap
 
 class TestedBase64Package : TurboReactPackage() {
@@ -23,10 +23,10 @@ class TestedBase64Package : TurboReactPackage() {
       moduleInfos[TestedBase64Module.NAME] = ReactModuleInfo(
         TestedBase64Module.NAME,
         TestedBase64Module.NAME,
-        false,  // canOverrideExistingModule
-        false,  // needsEagerInit
-        true,  // hasConstants
-        false,  // isCxxModule
+        false, // canOverrideExistingModule
+        false, // needsEagerInit
+        true, // hasConstants
+        false, // isCxxModule
         isTurboModule // isTurboModule
       )
       moduleInfos

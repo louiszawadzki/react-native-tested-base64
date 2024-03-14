@@ -11,7 +11,12 @@ buildscript {
     classpath "com.android.tools.build:gradle:7.2.1"
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    // classpath "org.jlleitschuh.gradle:ktlint-gradle:11.5.1"
   }
+}
+
+plugins {
+  id "org.jlleitschuh.gradle.ktlint" version "11.5.1"
 }
 
 def isNewArchitectureEnabled() {
@@ -24,6 +29,7 @@ apply plugin: "kotlin-android"
 if (isNewArchitectureEnabled()) {
   apply plugin: "com.facebook.react"
 }
+
 
 def getExtOrDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["TestedBase64_" + name]
@@ -116,5 +122,17 @@ if (isNewArchitectureEnabled()) {
     jsRootDir = file("../src/")
     libraryName = "TestedBase64"
     codegenJavaPackageName = "com.testedbase64"
+  }
+}
+
+ktlint {
+  debug.set(false)
+  android.set(true)
+  outputToConsole.set(true)
+  ignoreFailures.set(false)
+  enableExperimentalRules.set(false)
+  filter {
+    exclude("**/generated/**")
+    include("**/kotlin/**")
   }
 }

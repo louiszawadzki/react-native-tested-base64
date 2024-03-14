@@ -14,8 +14,13 @@ class TestedBase64Module internal constructor(context: ReactApplicationContext) 
   // Example method
   // See https://reactnative.dev/docs/native-modules-android
   @ReactMethod
-  override fun multiply(a: Double, b: Double, promise: Promise) {
-    promise.resolve(a * b)
+  override fun encode(string: String, promise: Promise) {
+    promise.resolve(string)
+  }
+
+  @ReactMethod
+  override fun decode(string: String, promise: Promise) {
+    promise.resolve(string)
   }
 
   companion object {

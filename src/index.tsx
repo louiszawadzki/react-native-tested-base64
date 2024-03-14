@@ -24,6 +24,9 @@ const TestedBase64 = TestedBase64Module
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return TestedBase64.multiply(a, b);
+export function encode(string: string): Promise<string> {
+  return TestedBase64.encode(string);
+}
+export function decode(string: string): Promise<string> {
+  return TestedBase64.decode(string);
 }

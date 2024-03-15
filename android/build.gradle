@@ -1,3 +1,5 @@
+import java.nio.file.Paths
+
 buildscript {
   // Buildscript is evaluated before everything else so we can't use getExtOrDefault
   def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["TestedBase64_kotlinVersion"]
@@ -99,6 +101,9 @@ android {
         java.srcDirs += ["src/oldarch"]
       }
     }
+    test {
+      java.srcDir("src/test/kotlin")
+    }
   }
 }
 
@@ -109,12 +114,63 @@ repositories {
 
 def kotlin_version = getExtOrDefault("kotlinVersion")
 
+static def findNodeModulePath(baseDir, packageName) {
+    def basePath = baseDir.toPath().normalize()
+    // Node's module resolution algorithm searches up to the root directory,
+    // after which the base path will be null
+    while (basePath) {
+        def candidatePath = Paths.get(basePath.toString(), "node_modules", packageName)
+        if (candidatePath.toFile().exists()) {
+            return candidatePath.toString()
+        }
+        basePath = basePath.getParent()
+    }
+    return null
+}
+
+def resolveReactNativeDirectory() {
+  def reactNativeLocation = rootProject.hasProperty("reactNativeDir") ? rootProject.getProperty("reactNativeDir") : null
+
+  if (reactNativeLocation != null) {
+    return file(reactNativeLocation)
+  }
+
+  def reactNativePath = findNodeModulePath(projectDir, "react-native")
+
+  if (reactNativePath != null) {
+    return file(reactNativePath)
+  }
+
+  throw new Exception(
+    "${project.name}: Failed to resolve 'react-native' in the project. " +
+    "Altenatively, you can specify 'reactNativeDir' with the path to 'react-native' in your 'gradle.properties' file."
+  )
+}
+
+def reactNativeRootDir = resolveReactNativeDirectory()
+def reactProperties = new Properties()
+file("$reactNativeRootDir/ReactAndroid/gradle.properties").withInputStream { reactProperties.load(it) }
+
+def reactNativeVersion = reactProperties.getProperty("VERSION_NAME")
+def (reactNativeMajorVersion, reactNativeMinorVersion) = reactNativeVersion.split("\\.").collect { it.isInteger() ? it.toInteger() : it }
+
+
 dependencies {
   // For < 0.71, this will be from the local maven repo
   // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
   //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-native:+"
+  if (reactNativeMajorVersion == 0 && reactNativeMinorVersion < 71) {
+    // noinspection GradleDynamicVersion
+    api 'com.facebook.react:react-native:+'
+  } else {
+    // We specify the $reactNativeVersion, like it's done on the react-native-gradle-plugin, as the plugin is not applied in tests.
+    // There is no impact for apps as we apply the same logic:
+    // https://github.com/facebook/react-native/blob/e1a1e6aa8030bf11d691c3dcf7abd13b25175027/packages/react-native-gradle-plugin/src/main/kotlin/com/facebook/react/utils/DependencyUtils.kt
+    api "com.facebook.react:react-android:$reactNativeVersion"
+  }
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  testImplementation "org.junit.platform:junit-platform-launcher:1.10.2"
+  testImplementation "org.junit.jupiter:junit-jupiter-engine:5.10.2"
 }
 
 if (isNewArchitectureEnabled()) {
@@ -122,6 +178,14 @@ if (isNewArchitectureEnabled()) {
     jsRootDir = file("../src/")
     libraryName = "TestedBase64"
     codegenJavaPackageName = "com.testedbase64"
+  }
+}
+
+tasks.withType(Test) {
+  useJUnitPlatform {}
+  reports {
+    junitXml.required.set(true)
+    html.required.set(true)
   }
 }
 

@@ -171,6 +171,8 @@ dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   testImplementation "org.junit.platform:junit-platform-launcher:1.10.2"
   testImplementation "org.junit.jupiter:junit-jupiter-engine:5.10.2"
+  testImplementation "org.mockito:mockito-junit-jupiter:5.10.0"
+  testImplementation "org.mockito.kotlin:mockito-kotlin:5.1.0"
 }
 
 if (isNewArchitectureEnabled()) {

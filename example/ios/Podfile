@@ -26,6 +26,7 @@ if linkage != nil
 end
 
 target 'TestedBase64Example' do
+  pod 'react-native-tested-base64', :path => '../../react-native-tested-base64.podspec', :testspecs => ['Tests']
   config = use_native_modules!
 
   use_react_native!(

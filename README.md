@@ -1,6 +1,50 @@
 # react-native-tested-base64
 
-A base64 library tested natively
+A base64 library with android and iOS native tests.
+
+## Testing resources
+
+- [ktlint-gradle](https://github.com/JLLeitschuh/ktlint-gradle)
+- [mockito-kotlin](https://github.com/mockito/mockito-kotlin)
+
+## Running tests
+
+First, setup the package:
+
+```sh
+yarn
+(cd example && yarn)
+```
+
+### Android
+
+To run all tests:
+
+```sh
+(cd android && ./gradlew clean build)
+```
+
+To run only the linter:
+
+```sh
+(cd android && ./gradlew ktlintCheck)
+```
+
+To fix the linter:
+
+```sh
+(cd android && ./gradlew ktlintFormat)
+```
+
+To run only the tests:
+
+```sh
+(cd android && ./gradlew testDebugUnitTest)
+```
+
+### iOS
+
+Open the example project in Xcode `xed example/ios` and run the tests from Test explorer.
 
 ## Installation
 
@@ -11,11 +55,12 @@ npm install react-native-tested-base64
 ## Usage
 
 ```js
-import { multiply } from 'react-native-tested-base64';
+import { encode } from 'react-native-tested-base64';
 
 // ...
 
-const result = await multiply(3, 7);
+const result = await encode('my string');
+const decoded = await decode(result);
 ```
 
 ## Contributing
